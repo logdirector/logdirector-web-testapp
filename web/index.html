@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>logdirector Web TestApp</title>
+    <link href="lib/bootstrap/css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+
+
+<ul class="nav nav-tabs" data-bind="foreach: examples">
+    <li data-bind="css: { active: title() == $root.selectedExample().title()}">
+        <a href="#" data-bind="text: title, click: $root.selectExample"></a>
+    </li>
+</ul>
+
+<p class="muted" data-bind="text: selectedExample().description"></p>
+
+<div class="row" data-bind="foreach: selectedExample().events">
+    <div class="span4">
+        <div class="well">
+            <h5 data-bind="text: title"></h5>
+
+            <div style="margin-top: 12px"></div>
+
+            <div data-bind="foreach: fields">
+                <div>
+                    <label data-bind="text: title"></label>
+                    <input type="text" data-bind="value: value, visible: !useTextArea()">
+                    <textarea rows="8" data-bind="value: value, visible: useTextArea()"></textarea>
+                </div>
+            </div>
+
+            <div style="margin-top: 12px"></div>
+
+            <button class="btn btn-primary" type="button" data-bind="click: log">Log</button>
+            <button class="btn" type="button" data-bind="click: reset">Reset values</button>
+
+        </div>
+    </div>
+</div>
+
+<script src="lib/jquery-1.9.min.js"></script>
+<script src="lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="lib/knockout-2.2.1.js"></script>
+<script src="lib/logdirector-js-client.js"></script>
+<script src="js/view-model.js"></script>
+
+<script type="text/javascript">
+
+    var viewModel = new ViewModel();
+
+    viewModel.initialize();
+
+    ko.applyBindings(viewModel);
+
+</script>
+
+</body>
+</html>
