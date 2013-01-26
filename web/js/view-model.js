@@ -28,6 +28,12 @@ var Attribute = function (title, attributeKey, type, value) {
 
 };
 
+var LogButtonStyles = {};
+
+LogButtonStyles.default = 0;
+LogButtonStyles.success = 1;
+LogButtonStyles.error = 2;
+
 var EventType = function (title, eventKey, fields) {
 
     var self = this;
@@ -35,8 +41,12 @@ var EventType = function (title, eventKey, fields) {
     self.title = ko.observable(title);
     self.eventKey = ko.observable(eventKey);
     self.fields = ko.observableArray(fields);
+    self.buttonStyle = ko.observable(LogButtonStyles.default);
+    self.intervalId = null;
 
     self.log = function (event) {
+
+        self.resetButtonStyle();
 
         var attributes = {};
 
@@ -47,7 +57,31 @@ var EventType = function (title, eventKey, fields) {
             attributes[field.attributeKey() + ":" + field.type()] = field.value();
         }
 
-        logdirector.log(event.eventKey(), attributes);
+        var request = logdirector.log(event.eventKey(), attributes);
+
+        request.onreadystatechange = function() {
+
+            if(request.readyState == 4) {
+
+                // Check if the event was stored
+                if(request.responseText && request.responseText.indexOf('Failed events=0') >= 0) {
+
+                    // Set button to success mode
+                    self.setButtonStyle(LogButtonStyles.success);
+
+                } else {
+
+                    // Show error notification
+                    $('.top-right').notify({
+                        type: 'error',
+                        message: { text: 'Oops! That didn\'t work - try to change your values.' }
+                    }).show();
+
+                    // Set button to error mode
+                    self.setButtonStyle(LogButtonStyles.error);
+                }
+            }
+        };
     };
 
     self.reset = function () {
@@ -59,6 +93,35 @@ var EventType = function (title, eventKey, fields) {
             field.value(field.default());
         }
     };
+
+    self.setButtonStyle = function(style) {
+
+        self.buttonStyle(style);
+        self.intervalId = setTimeout(self.resetButtonStyle, 2500);
+    };
+
+    self.resetButtonStyle = function() {
+        self.buttonStyle(LogButtonStyles.default);
+        clearTimeout(self.intervalId);
+    };
+
+    self.buttonText = ko.computed(function() {
+
+        return self.buttonStyle() == LogButtonStyles.default ? 'Log' : (self.buttonStyle() == LogButtonStyles.success ? 'Sucess' : 'Error');
+    });
+
+    self.useDefaultButtonStyle = ko.computed(function() {
+        return self.buttonStyle() == LogButtonStyles.default;
+    });
+
+    self.useSuccessButtonStyle = ko.computed(function() {
+        return self.buttonStyle() == LogButtonStyles.success;
+    });
+
+    self.useErrorButtonStyle = ko.computed(function() {
+        return self.buttonStyle() == LogButtonStyles.error;
+    });
+
 };
 
 var Example = function (title, appKey, description, events) {
@@ -73,7 +136,7 @@ var ViewModel = function () {
 
     var self = this;
 
-    // region Fields
+    // region Examples
 
     // File job example
     var fileJobExample = new Example("File job example", "File job", "Log events from a job that processes all files from an input folder and saves the processed result in an output folder.", [
@@ -188,17 +251,11 @@ var ViewModel = function () {
 
     // endregion
 
-    // region Initialization
-
     self.initialize = function () {
 
         // Select initial example
         self.selectExample(exceptionExample);
     };
-
-    // endregion
-
-    // region Handlers
 
     self.selectExample = function (example) {
 
@@ -206,6 +263,4 @@ var ViewModel = function () {
 
         logdirector.configure("http://test.logdirector.com/logdirector", example.appKey());
     };
-
-    // endregion
 };

@@ -3,6 +3,7 @@
 <head>
     <title>logdirector Web TestApp</title>
     <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="lib/bootstrap/css/bootstrap-notify.css" rel="stylesheet">
 </head>
 <body>
 
@@ -35,18 +36,21 @@
 
                 <div style="margin-top: 12px"></div>
 
-                <button class="btn btn-primary" type="button" data-bind="click: log">Log</button>
+                <button class="btn" type="button" data-bind="text: buttonText, click: log, css: { 'btn-primary': useDefaultButtonStyle(), 'btn-success': useSuccessButtonStyle(), 'btn-danger': useErrorButtonStyle() }"></button>
                 <button class="btn" type="button" data-bind="click: reset">Reset values</button>
 
             </div>
         </div>
     </div>
 
+    <div class="notifications top-right"></div>
+
 </div>
 
 
 <script src="lib/jquery-1.9.min.js"></script>
 <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="lib/bootstrap/js/bootstrap-notify.js"></script>
 <script src="lib/knockout-2.2.1.min.js"></script>
 <script src="lib/logdirector-js-client.js"></script>
 <script src="js/view-model.js"></script>

@@ -44,7 +44,7 @@ logdirector.log = function (type, attributes) {
 
     params = encodeURI(params);
 
-    logdirector.executeRequest(url, params);
+    return logdirector.executeRequest(url, params);
 };
 
 logdirector.executeRequest = function (url, params) {
@@ -56,4 +56,6 @@ logdirector.executeRequest = function (url, params) {
     request.setRequestHeader("Content-length", params.length);
     request.setRequestHeader("Connection", "close");
     request.send(params);
+
+    return request;
 };
