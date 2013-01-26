@@ -1,0 +1,39 @@
+.spacer-top-small {
+    margin-top: 8px;
+}
+
+.spacer-top-medium {
+    margin-top: 12px;
+}
+
+.spacer-top-large {
+    margin-top: 24px;
+}
+
+.spacer-top-remove {
+    margin-top: 0px;
+}
+
+.spacer-bottom-remove {
+    margin-bottom: 0px;
+}
+
+.spacer-left-small {
+    margin-left: 8px;
+}
+
+.spacer-left-medium {
+    margin-left: 12px;
+}
+
+.spacer-left-large {
+    margin-left: 24px;
+}
+
+.spacer-left-remove {
+    margin-left: 0px;
+}
+
+.event-well {
+    width: 240px;
+}

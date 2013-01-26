@@ -4,6 +4,7 @@
     <title>logdirector Web TestApp</title>
     <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="lib/bootstrap/css/bootstrap-notify.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
 </head>
 <body>
 
@@ -11,36 +12,48 @@
 
     <h3>logdirector Web Logger</h3>
 
-    <ul class="nav nav-tabs" data-bind="foreach: examples">
+    <ul class="nav nav-pills" data-bind="foreach: examples">
         <li data-bind="css: { active: title() == $root.selectedExample().title()}">
             <a href="#" data-bind="text: title, click: $root.selectExample"></a>
         </li>
     </ul>
 
+    <p><strong>Application name</strong></p>
+    <p class="muted">
+        <span data-bind="text: selectedExample().appKey, visible: !selectedExample().isEditApp()"></span>
+        <a href="#" class="btn btn-mini spacer-left-small" data-bind="click: selectedExample().editApp, visible: !selectedExample().isEditApp()"><i class="icon-edit"></i></a>
+        <input type="text" style="margin-bottom: 0px;" data-bind="value: selectedExample().appKey, visible: selectedExample().isEditApp()">
+        <a href="#" class="btn spacer-left-small" data-bind="click: selectedExample().finishEditApp, visible: selectedExample().isEditApp()"><i class="icon-ok"></i></a>
+    </p>
+
+    <p><strong>Description</strong></p>
     <p class="muted" data-bind="text: selectedExample().description"></p>
 
-    <div class="row" data-bind="foreach: selectedExample().events">
-        <div class="span4">
-            <div class="well">
-                <h5 data-bind="text: title"></h5>
+    <div class="row spacer-top-large" data-bind="foreach: selectedExample().events">
+        <div class="span4 event-well">
+            <div class="well well-small">
+                <h5 class="spacer-top-remove" data-bind="text: title"></h5>
 
-                <div style="margin-top: 12px"></div>
-
-                <div data-bind="foreach: fields">
+                <div class="spacer-top-medium" data-bind="foreach: fields">
                     <div>
                         <label data-bind="text: title"></label>
                         <input type="text" data-bind="value: value, visible: !useTextArea()">
-                        <textarea rows="8" data-bind="value: value, visible: useTextArea()"></textarea>
+                        <textarea rows="5" data-bind="value: value, visible: useTextArea()"></textarea>
                     </div>
                 </div>
 
-                <div style="margin-top: 12px"></div>
-
-                <button class="btn" type="button" data-bind="text: buttonText, click: log, css: { 'btn-primary': useDefaultButtonStyle(), 'btn-success': useSuccessButtonStyle(), 'btn-danger': useErrorButtonStyle() }"></button>
-                <button class="btn" type="button" data-bind="click: reset">Reset values</button>
+                <div class="spacer-top-medium">
+                    <button class="btn" type="button" data-bind="text: buttonText, click: function() { log($data); $root.showInfoAlert(); }, css: { 'btn-primary': useDefaultButtonStyle(), 'btn-success': useSuccessButtonStyle(), 'btn-danger': useErrorButtonStyle() }"></button>
+                    <button class="btn" type="button" data-bind="click: reset">Reset values</button>
+                </div>
 
             </div>
         </div>
+    </div>
+
+    <div class="alert alert-success" data-bind="visible: $root.isInfoAlertVisible">
+        <button type="button" class="close" data-bind="click: $root.dismissInfoAlert">&times;</button>
+        You can view the data you have just logged on our <a href="http://test.logdirector.com/logdirector">test server</a>. Don't forget to <a href="http://wiki.logdirector.com/display/WIKI/Event+list#Eventlist-application-filter">switch</a> to the correct app after you logged in!
     </div>
 
     <div class="notifications top-right"></div>

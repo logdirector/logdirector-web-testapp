@@ -126,10 +126,28 @@ var EventType = function (title, eventKey, fields) {
 
 var Example = function (title, appKey, description, events) {
 
-    this.title = ko.observable(title);
-    this.appKey = ko.observable(appKey);
-    this.description = ko.observable(description);
-    this.events = ko.observableArray(events);
+    var self = this;
+
+    self.title = ko.observable(title);
+    self.appKey = ko.observable(appKey);
+    self.description = ko.observable(description);
+    self.events = ko.observableArray(events);
+
+    self.isEditApp = ko.observable(false);
+
+    self.editApp = function() {
+
+        self.isEditApp(true);
+    }
+
+    self.finishEditApp = function() {
+
+        self.isEditApp(false);
+
+        // Reconfigure our client with the changed key
+        logdirector.configure("http://test.logdirector.com/logdirector", self.appKey());
+    }
+
 };
 
 var ViewModel = function () {
@@ -165,7 +183,7 @@ var ViewModel = function () {
     var exceptionExample = new Example("Exception example", "Exception logger", "Log an exception with stacktrace, complete with class name, method name and line number.", [
 
         new EventType("Error message", "Error message", [
-            new Attribute("Error message", "Message", "string", "Error loading user from DB."),
+            new Attribute("Message", "Message", "string", "Error loading user from DB."),
             new Attribute("Severity", "Severity", "string", "high"),
             new Attribute("Exception", "Exception", "exception", JSON.stringify({
                 "platform":"java",
@@ -223,7 +241,7 @@ var ViewModel = function () {
     ]);
 
     // Web site example
-    var websiteExample = new Example("Web page example", "Web site", "Log custom usage data from a web site like page visits or searches.", [
+    var websiteExample = new Example("Website example", "Web site", "Log custom usage data from a web site like page visits or searches.", [
 
         new EventType("Page visit", "Page visit", [
 
@@ -262,5 +280,21 @@ var ViewModel = function () {
         self.selectedExample(example);
 
         logdirector.configure("http://test.logdirector.com/logdirector", example.appKey());
+    };
+
+    self.hasDismissedInfoAlert = ko.observable(false);
+
+    self.isInfoAlertVisible = ko.observable(false);
+
+    self.showInfoAlert = function() {
+
+        if(!self.hasDismissedInfoAlert())
+            self.isInfoAlertVisible(true);
+    };
+
+    self.dismissInfoAlert = function() {
+
+        self.hasDismissedInfoAlert(true);
+        self.isInfoAlertVisible(false);
     };
 };
